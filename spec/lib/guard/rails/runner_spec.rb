@@ -17,6 +17,7 @@ describe Guard::RailsRunner do
       let(:pid) { 12345 }
 
       before do
+        FileUtils.mkdir_p File.split(runner.pid_file).first
         File.open(runner.pid_file, 'w') { |fh| fh.print pid }
       end
 
@@ -44,6 +45,14 @@ describe Guard::RailsRunner do
 
       it "should have a daemon switch" do
         runner.build_rails_command.should match(%r{ -d})
+      end
+    end
+    
+    context 'debugger' do
+      let(:options) { default_options.merge(:debugger => true) }
+
+      it "should have a debugger switch" do
+        runner.build_rails_command.should match(%r{ -u})
       end
     end
 
